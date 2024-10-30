@@ -5,7 +5,7 @@ function getBathValue() {
         return parseInt(i)+1;
     }
   }
-  return -1; // Invalid Value
+  return -1;
 }
 
 function getBHKValue() {
@@ -15,7 +15,7 @@ function getBHKValue() {
         return parseInt(i)+1;
     }
   }
-  return -1; // Invalid Value
+  return -1;
 }
 
 function onClickedEstimatePrice() {
@@ -25,26 +25,30 @@ function onClickedEstimatePrice() {
   var bathrooms = getBathValue();
   var location = document.getElementById("uiLocations");
   var estPrice = document.getElementById("uiEstimatedPrice");
+  var url = "https://bangalore-home-prices-backend.vercel.app/predict_home_price";
 
-  var url = "https://bangalore-home-prices-backend.vercel.app/predict_home_price"; //Use this if you are NOT using nginx which is first 7 tutorials
-  // var url = "/predict_home_price"; // Use this if  you are using nginx. i.e tutorial 8 and onwards
-
-  $.post(url, {
-      total_sqft: parseFloat(sqft.value),
-      bhk: bhk,
-      bath: bathrooms,
-      location: location.value
-  },function(data, status) {
-      console.log(data.estimated_price);
-      estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
-      console.log(status);
+  $.ajax({
+      url: url,
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+          total_sqft: parseFloat(sqft.value),
+          bhk: bhk,
+          bath: bathrooms,
+          location: location.value
+      }),
+      success: function(data, status) {
+          console.log(data.estimated_price);
+          estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
+          console.log(status);
+      }
   });
+  
 }
 
 function onPageLoad() {
   console.log( "document loaded" );
-  var url = "https://bangalore-home-prices-backend.vercel.app/get_location_names"; // Use this if you are NOT using nginx which is first 7 tutorials
-  // var url = "/get_location_names"; // Use this if  you are using nginx. i.e tutorial 8 and onwards
+  var url = "https://bangalore-home-prices-backend.vercel.app/get_location_names";
   $.get(url,function(data, status) {
       console.log("got response for get_location_names request");
       if(data) {
